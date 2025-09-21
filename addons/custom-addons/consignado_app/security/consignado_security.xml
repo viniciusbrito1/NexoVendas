@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Grupos de Segurança -->
+        <record id="group_consignado_manager" model="res.groups">
+            <field name="name">Consignado Manager</field>
+            <field name="category_id" ref="base.module_category_sales"/>
+            <field name="comment">Acesso completo ao módulo Consignado App</field>
+        </record>
+
+        <record id="group_consignado_user" model="res.groups">
+            <field name="name">Consignado User</field>
+            <field name="category_id" ref="base.module_category_sales"/>
+            <field name="comment">Acesso de usuário ao módulo Consignado App</field>
+        </record>
+
+        <!-- Regras de Registro para Vendedores -->
+        <record id="consignado_rota_rule_salesman" model="ir.rule">
+            <field name="name">Consignado Rota: Vendedor só vê suas rotas</field>
+            <field name="model_id" ref="model_consignado_rota"/>
+            <field name="domain_force">['|', ('vendedor_id', '=', user.id), ('vendedor_id', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('sales_team.group_sale_salesman'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Regras de Registro para Usuários -->
+        <record id="consignado_rota_rule_user" model="ir.rule">
+            <field name="name">Consignado Rota: Usuários podem ver todas as rotas</field>
+            <field name="model_id" ref="model_consignado_rota"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_consignado_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Regras de Registro para Managers -->
+        <record id="consignado_rota_rule_manager" model="ir.rule">
+            <field name="name">Consignado Rota: Managers acesso total</field>
+            <field name="model_id" ref="model_consignado_rota"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_consignado_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

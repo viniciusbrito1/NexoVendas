@@ -1,0 +1,316 @@
+/* Estilos para o módulo Consignado App */
+
+/* Estilos gerais para as rotas */
+.consignado-rota-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.consignado-rota-card:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+/* Status badges personalizados */
+.consignado-status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.consignado-status-pendente {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #bbdefb;
+}
+
+.consignado-status-em_andamento {
+    background-color: #fff3e0;
+    color: #f57c00;
+    border: 1px solid #ffcc02;
+}
+
+.consignado-status-concluida {
+    background-color: #e8f5e8;
+    color: #388e3c;
+    border: 1px solid #c8e6c9;
+}
+
+.consignado-status-atrasada {
+    background-color: #ffebee;
+    color: #d32f2f;
+    border: 1px solid #ffcdd2;
+}
+
+/* Indicadores de urgência */
+.consignado-urgente {
+    border-left: 4px solid #f44336;
+    animation: pulse 2s infinite;
+}
+
+.consignado-atencao {
+    border-left: 4px solid #ff9800;
+}
+
+.consignado-normal {
+    border-left: 4px solid #4caf50;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* Estilos para o formulário */
+.consignado-form-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.consignado-form-section h3 {
+    color: #495057;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* Estilos para a lista de clientes */
+.consignado-clientes-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.consignado-cliente-item {
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.consignado-cliente-item:last-child {
+    border-bottom: none;
+}
+
+.consignado-cliente-info {
+    flex: 1;
+}
+
+.consignado-cliente-name {
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 4px;
+}
+
+.consignado-cliente-details {
+    font-size: 12px;
+    color: #6c757d;
+}
+
+/* Estilos para o calendário */
+.consignado-calendar-event {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    margin: 2px 0;
+}
+
+.consignado-calendar-event.atrasada {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.consignado-calendar-event.concluida {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* Estilos para o aplicativo móvel */
+@media (max-width: 768px) {
+    .consignado-mobile-container {
+        padding: 10px;
+    }
+    
+    .consignado-rota-card {
+        margin-bottom: 12px;
+        padding: 12px;
+    }
+    
+    .consignado-form-section {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .consignado-clientes-list {
+        max-height: 200px;
+    }
+}
+
+/* Estilos para modo offline */
+.consignado-offline-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #ff9800;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 9999;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+
+.consignado-offline-indicator.show {
+    transform: translateY(0);
+}
+
+/* Estilos para botões de ação */
+.consignado-action-btn {
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.consignado-action-btn.primary {
+    background: #007bff;
+    color: white;
+}
+
+.consignado-action-btn.primary:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+.consignado-action-btn.success {
+    background: #28a745;
+    color: white;
+}
+
+.consignado-action-btn.success:hover {
+    background: #1e7e34;
+    transform: translateY(-1px);
+}
+
+.consignado-action-btn.warning {
+    background: #ffc107;
+    color: #212529;
+}
+
+.consignado-action-btn.warning:hover {
+    background: #e0a800;
+    transform: translateY(-1px);
+}
+
+/* Estilos para indicadores de progresso */
+.consignado-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0;
+}
+
+.consignado-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    transition: width 0.3s ease;
+}
+
+/* Estilos para notificações */
+.consignado-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 16px;
+    max-width: 300px;
+    z-index: 10000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.consignado-notification.show {
+    transform: translateX(0);
+}
+
+.consignado-notification.success {
+    border-left: 4px solid #28a745;
+}
+
+.consignado-notification.error {
+    border-left: 4px solid #dc3545;
+}
+
+.consignado-notification.warning {
+    border-left: 4px solid #ffc107;
+}
+
+/* Estilos para loading */
+.consignado-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Estilos para o dashboard */
+.consignado-dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.consignado-dashboard-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.consignado-dashboard-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #007bff;
+    margin-bottom: 8px;
+}
+
+.consignado-dashboard-label {
+    color: #6c757d;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}

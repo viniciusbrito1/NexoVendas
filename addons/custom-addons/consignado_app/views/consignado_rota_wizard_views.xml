@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Wizard Form View para Reagendar Rota -->
+        <record id="view_consignado_rota_reagendar_wizard_form" model="ir.ui.view">
+            <field name="name">consignado.rota.reagendar.wizard.form</field>
+            <field name="model">consignado.rota.reagendar.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Reagendar Rota">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="rota_id" readonly="1"/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group>
+                                <field name="nova_data" 
+                                       string="Nova Data de Execução"
+                                       required="1"/>
+                            </group>
+                            <group>
+                                <field name="motivo" 
+                                       string="Motivo do Reagendamento"
+                                       placeholder="Ex: Cliente solicitou mudança de data, feriado, etc."/>
+                            </group>
+                        </group>
+                        
+                        <div class="alert alert-info" role="alert">
+                            <strong>Informação:</strong> A nova data deve ser posterior à data atual.
+                        </div>
+                    </sheet>
+                    
+                    <footer>
+                        <button name="action_reagendar" 
+                                type="object" 
+                                string="Reagendar" 
+                                class="btn-primary"/>
+                        <button name="action_cancel" 
+                                type="object" 
+                                string="Cancelar" 
+                                class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <!-- Action para abrir o wizard -->
+        <record id="action_consignado_rota_reagendar_wizard" model="ir.actions.act_window">
+            <field name="name">Reagendar Rota</field>
+            <field name="res_model">consignado.rota.reagendar.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="view_consignado_rota_reagendar_wizard_form"/>
+        </record>
+
+    </data>
+</odoo>

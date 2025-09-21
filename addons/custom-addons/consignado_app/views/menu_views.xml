@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Menu Principal do Consignado App -->
+        <menuitem id="menu_consignado_app_root" 
+                  name="Consignado App" 
+                  sequence="10" 
+                  web_icon="consignado_app,static/description/icon.png"/>
+
+        <!-- Submenu de Gestão -->
+        <menuitem id="menu_consignado_gestao" 
+                  name="Gestão" 
+                  parent="menu_consignado_app_root" 
+                  sequence="10"/>
+
+        <!-- Menu Rotas -->
+        <menuitem id="menu_consignado_rotas" 
+                  name="Rotas" 
+                  parent="menu_consignado_gestao" 
+                  action="action_consignado_rota" 
+                  sequence="10"/>
+
+        <!-- Submenu Relatórios -->
+        <menuitem id="menu_consignado_relatorios" 
+                  name="Relatórios" 
+                  parent="menu_consignado_app_root" 
+                  sequence="20"/>
+
+        <!-- Menu Análise de Rotas -->
+        <menuitem id="menu_consignado_analise_rotas" 
+                  name="Análise de Rotas" 
+                  parent="menu_consignado_relatorios" 
+                  action="action_consignado_rota" 
+                  sequence="10"/>
+
+        <!-- Submenu Configurações -->
+        <menuitem id="menu_consignado_config" 
+                  name="Configurações" 
+                  parent="menu_consignado_app_root" 
+                  sequence="30"/>
+
+        <!-- Menu para Vendedores (acesso direto às suas rotas) -->
+        <menuitem id="menu_minhas_rotas" 
+                  name="Minhas Rotas" 
+                  parent="menu_consignado_app_root" 
+                  action="action_minhas_rotas" 
+                  sequence="5"
+                  groups="sales_team.group_sale_salesman"/>
+
+    </data>
+</odoo>

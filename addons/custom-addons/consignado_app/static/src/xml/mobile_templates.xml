@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+    
+    <!-- Template principal do aplicativo móvel -->
+    <t t-name="consignado_app.MobileApp" owl="1">
+        <div class="consignado-mobile-app">
+            <!-- Indicador de status de conexão -->
+            <div t-if="!state.isOnline" class="consignado-connection-status show">
+                <i class="fa fa-wifi"/> Modo Offline - Dados serão sincronizados quando voltar online
+            </div>
+            
+            <!-- Header -->
+            <div class="consignado-mobile-header">
+                <h1 class="consignado-mobile-title">Consignado App</h1>
+                <p class="consignado-mobile-subtitle">Suas rotas de vendas</p>
+            </div>
+            
+            <!-- Dashboard de estatísticas -->
+            <div class="consignado-mobile-dashboard">
+                <div class="consignado-stats-grid">
+                    <div class="consignado-stat-card">
+                        <div class="consignado-stat-number" t-esc="getEstatisticas().total"/>
+                        <div class="consignado-stat-label">Total</div>
+                    </div>
+                    <div class="consignado-stat-card">
+                        <div class="consignado-stat-number" t-esc="getEstatisticas().pendentes"/>
+                        <div class="consignado-stat-label">Pendentes</div>
+                    </div>
+                    <div class="consignado-stat-card">
+                        <div class="consignado-stat-number" t-esc="getEstatisticas().emAndamento"/>
+                        <div class="consignado-stat-label">Em Andamento</div>
+                    </div>
+                    <div class="consignado-stat-card">
+                        <div class="consignado-stat-number" t-esc="getEstatisticas().atrasadas"/>
+                        <div class="consignado-stat-label">Atrasadas</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filtros -->
+            <div class="consignado-mobile-filters">
+                <button class="consignado-filter-btn" 
+                        t-att-class="{'active': state.filter === 'todas'}"
+                        t-on-click="() => this.state.filter = 'todas'">
+                    Todas
+                </button>
+                <button class="consignado-filter-btn" 
+                        t-att-class="{'active': state.filter === 'pendente'}"
+                        t-on-click="() => this.state.filter = 'pendente'">
+                    Pendentes
+                </button>
+                <button class="consignado-filter-btn" 
+                        t-att-class="{'active': state.filter === 'em_andamento'}"
+                        t-on-click="() => this.state.filter = 'em_andamento'">
+                    Em Andamento
+                </button>
+                <button class="consignado-filter-btn" 
+                        t-att-class="{'active': state.filter === 'atrasada'}"
+                        t-on-click="() => this.state.filter = 'atrasada'">
+                    Atrasadas
+                </button>
+            </div>
+            
+            <!-- Lista de rotas -->
+            <div class="consignado-mobile-rotas">
+                <t t-if="state.loading">
+                    <div class="consignado-mobile-loading">
+                        <div class="consignado-loading"/>
+                        <span>Carregando rotas...</span>
+                    </div>
+                </t>
+                <t t-elif="state.rotas.length === 0">
+                    <div class="consignado-mobile-empty">
+                        <div class="consignado-mobile-empty-icon">
+                            <i class="fa fa-route"/>
+                        </div>
+                        <div class="consignado-mobile-empty-text">Nenhuma rota encontrada</div>
+                        <div class="consignado-mobile-empty-subtext">
+                            Entre em contato com seu supervisor para configurar suas rotas
+                        </div>
+                    </div>
+                </t>
+                <t t-else="">
+                    <t t-foreach="getFilteredRotas()" t-as="rota" t-key="rota.id">
+                        <div class="consignado-mobile-rota-card" 
+                             t-att-class="{'consignado-urgente': getRotaStatus(rota) === 'atrasada'}">
+                            <div class="consignado-rota-header">
+                                <h3 class="consignado-rota-name" t-esc="rota.name"/>
+                                <span class="consignado-rota-status" 
+                                      t-att-class="'consignado-rota-status-' + getRotaStatus(rota)"
+                                      t-esc="getRotaStatus(rota)"/>
+                            </div>
+                            
+                            <div class="consignado-rota-info">
+                                <div class="consignado-rota-info-item">
+                                    <i class="fa fa-users consignado-rota-info-icon"/>
+                                    <span class="consignado-rota-info-text" t-esc="rota.total_clientes + ' clientes'"/>
+                                </div>
+                                <div class="consignado-rota-info-item">
+                                    <i class="fa fa-calendar consignado-rota-info-icon"/>
+                                    <span class="consignado-rota-info-text" t-esc="formatDate(rota.proxima_data)"/>
+                                </div>
+                                <div class="consignado-rota-info-item">
+                                    <i class="fa fa-clock-o consignado-rota-info-icon"/>
+                                    <span class="consignado-rota-info-text" t-esc="rota.frequencia_dias + ' dias'"/>
+                                </div>
+                                <div class="consignado-rota-info-item">
+                                    <i class="fa fa-map-marker consignado-rota-info-icon"/>
+                                    <span class="consignado-rota-info-text">Rota</span>
+                                </div>
+                            </div>
+                            
+                            <div class="consignado-rota-actions">
+                                <button class="consignado-action-btn-mobile secondary"
+                                        t-on-click="() => this.selectRota(rota)">
+                                    <i class="fa fa-eye"/> Ver Detalhes
+                                </button>
+                                <button class="consignado-action-btn-mobile primary"
+                                        t-if="getRotaStatus(rota) !== 'concluida'"
+                                        t-on-click="() => this.marcarRotaConcluida(rota.id)">
+                                    <i class="fa fa-check"/> Concluir
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </div>
+            
+            <!-- Detalhes da rota selecionada -->
+            <t t-if="state.selectedRota">
+                <div class="consignado-rota-details">
+                    <div class="consignado-details-header">
+                        <h2 class="consignado-details-title" t-esc="state.selectedRota.name"/>
+                        <button class="consignado-details-close" 
+                                t-on-click="() => this.state.selectedRota = null">
+                            <i class="fa fa-times"/>
+                        </button>
+                    </div>
+                    
+                    <div class="consignado-details-section">
+                        <h3 class="consignado-details-section-title">Informações da Rota</h3>
+                        <div class="consignado-details-info">
+                            <div class="consignado-details-info-item">
+                                <span class="consignado-details-info-label">Status:</span>
+                                <span class="consignado-details-info-value" t-esc="getRotaStatus(state.selectedRota)"/>
+                            </div>
+                            <div class="consignado-details-info-item">
+                                <span class="consignado-details-info-label">Frequência:</span>
+                                <span class="consignado-details-info-value" t-esc="state.selectedRota.frequencia_dias + ' dias'"/>
+                            </div>
+                            <div class="consignado-details-info-item">
+                                <span class="consignado-details-info-label">Última visita:</span>
+                                <span class="consignado-details-info-value" t-esc="formatDate(state.selectedRota.ultima_data_percorrida)"/>
+                            </div>
+                            <div class="consignado-details-info-item">
+                                <span class="consignado-details-info-label">Próxima visita:</span>
+                                <span class="consignado-details-info-value" t-esc="formatDate(state.selectedRota.proxima_data)"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="consignado-clientes-section">
+                        <button class="consignado-clientes-toggle"
+                                t-on-click="() => this.state.showClientes = !this.state.showClientes">
+                            <i class="fa fa-users"/>
+                            <span t-esc="state.selectedRota.total_clientes + ' clientes nesta rota'"/>
+                            <i t-att-class="state.showClientes ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"/>
+                        </button>
+                        
+                        <t t-if="state.showClientes">
+                            <div class="consignado-clientes-list">
+                                <t t-foreach="state.selectedRota.clientes_ids" t-as="cliente" t-key="cliente.id">
+                                    <div class="consignado-cliente-item-mobile">
+                                        <div class="consignado-cliente-name-mobile" t-esc="cliente.name"/>
+                                        <div class="consignado-cliente-details-mobile">
+                                            <t t-if="cliente.email">
+                                                <i class="fa fa-envelope"/> <t t-esc="cliente.email"/>
+                                            </t>
+                                            <t t-if="cliente.phone">
+                                                <br/><i class="fa fa-phone"/> <t t-esc="cliente.phone"/>
+                                            </t>
+                                            <t t-if="cliente.street">
+                                                <br/><i class="fa fa-map-marker"/> <t t-esc="cliente.street"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                    
+                    <div class="consignado-rota-actions">
+                        <button class="consignado-action-btn-mobile primary"
+                                t-if="getRotaStatus(state.selectedRota) !== 'concluida'"
+                                t-on-click="() => this.marcarRotaConcluida(state.selectedRota.id)">
+                            <i class="fa fa-check"/> Marcar como Concluída
+                        </button>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+    
+    <!-- Template para widget de rota -->
+    <t t-name="consignado_app.ConsignadoRotaWidget" owl="1">
+        <div class="consignado-rota-widget">
+            <div class="consignado-form-section">
+                <h3>Informações da Rota</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Nome da Rota</label>
+                        <input type="text" class="form-control" t-model="record.data.name"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Vendedor</label>
+                        <select class="form-control" t-model="record.data.vendedor_id">
+                            <option value="">Selecione um vendedor</option>
+                            <!-- Opções de vendedores serão carregadas dinamicamente -->
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label>Frequência (dias)</label>
+                        <input type="number" class="form-control" 
+                               t-model="record.data.frequencia_dias"
+                               t-on-change="onFrequenciaChange"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Próxima Data</label>
+                        <input type="date" class="form-control" 
+                               t-model="record.data.proxima_data" readonly="readonly"/>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <button class="btn btn-primary" 
+                            t-on-click="calculateProximaData"
+                            t-att-disabled="!record.data.frequencia_dias or !record.data.ultima_data_percorrida">
+                        <i class="fa fa-calculator"/> Calcular Próxima Data
+                    </button>
+                </div>
+            </div>
+            
+            <div class="consignado-form-section">
+                <h3>Clientes da Rota</h3>
+                <div class="consignado-clientes-list">
+                    <t t-foreach="record.data.clientes_ids" t-as="cliente" t-key="cliente.id">
+                        <div class="consignado-cliente-item">
+                            <div class="consignado-cliente-info">
+                                <div class="consignado-cliente-name" t-esc="cliente.name"/>
+                                <div class="consignado-cliente-details">
+                                    <t t-if="cliente.email">
+                                        <i class="fa fa-envelope"/> <t t-esc="cliente.email"/>
+                                    </t>
+                                    <t t-if="cliente.phone">
+                                        <br/><i class="fa fa-phone"/> <t t-esc="cliente.phone"/>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+    
+    <!-- Template para notificações -->
+    <t t-name="consignado_app.Notification" owl="1">
+        <div class="consignado-notification" 
+             t-att-class="'consignado-notification ' + props.type + (props.show ? ' show' : '')">
+            <div class="d-flex align-items-center">
+                <i t-att-class="'fa fa-' + (props.type === 'success' ? 'check-circle' : props.type === 'error' ? 'exclamation-circle' : 'info-circle')"/>
+                <span class="ml-2" t-esc="props.message"/>
+            </div>
+            <button class="btn-close" t-on-click="props.onClose">
+                <i class="fa fa-times"/>
+            </button>
+        </div>
+    </t>
+    
+</templates>

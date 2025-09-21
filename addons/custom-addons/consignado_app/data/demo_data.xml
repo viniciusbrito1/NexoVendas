@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Dados de demonstração para o módulo Consignado App -->
+        
+        <!-- Clientes de demonstração -->
+        <record id="demo_cliente_1" model="res.partner">
+            <field name="name">Supermercado Central</field>
+            <field name="is_company" eval="True"/>
+            <field name="email">contato@supercentral.com.br</field>
+            <field name="phone">(11) 3333-4444</field>
+            <field name="street">Rua das Flores, 123</field>
+            <field name="city">São Paulo</field>
+            <field name="zip">01234-567</field>
+        </record>
+
+        <record id="demo_cliente_2" model="res.partner">
+            <field name="name">Mercadinho do Bairro</field>
+            <field name="is_company" eval="True"/>
+            <field name="email">vendas@mercadinhobairro.com.br</field>
+            <field name="phone">(11) 2222-3333</field>
+            <field name="street">Av. Principal, 456</field>
+            <field name="city">São Paulo</field>
+            <field name="zip">04567-890</field>
+        </record>
+
+        <record id="demo_cliente_3" model="res.partner">
+            <field name="name">Padaria São José</field>
+            <field name="is_company" eval="True"/>
+            <field name="email">contato@padariasaojose.com.br</field>
+            <field name="phone">(11) 4444-5555</field>
+            <field name="street">Rua da Padaria, 789</field>
+            <field name="city">São Paulo</field>
+            <field name="zip">05678-901</field>
+        </record>
+
+        <record id="demo_cliente_4" model="res.partner">
+            <field name="name">Farmácia Popular</field>
+            <field name="is_company" eval="True"/>
+            <field name="email">farmacia@popular.com.br</field>
+            <field name="phone">(11) 5555-6666</field>
+            <field name="street">Rua da Saúde, 321</field>
+            <field name="city">São Paulo</field>
+            <field name="zip">06789-012</field>
+        </record>
+
+        <record id="demo_cliente_5" model="res.partner">
+            <field name="name">Loja de Conveniência 24h</field>
+            <field name="is_company" eval="True"/>
+            <field name="email">loja@conveniencia24h.com.br</field>
+            <field name="phone">(11) 6666-7777</field>
+            <field name="street">Av. 24 Horas, 654</field>
+            <field name="city">São Paulo</field>
+            <field name="zip">07890-123</field>
+        </record>
+
+        <!-- Rotas de demonstração -->
+        <record id="demo_rota_1" model="consignado.rota">
+            <field name="name">Rota Bairro Sul</field>
+            <field name="vendedor_id" ref="base.user_admin"/>
+            <field name="frequencia_dias">7</field>
+            <field name="ultima_data_percorrida" eval="(DateTime.now() - timedelta(days=3)).strftime('%Y-%m-%d')"/>
+            <field name="ativa" eval="True"/>
+            <field name="observacoes">Rota semanal no bairro sul da cidade. Clientes preferem visitas nas manhãs.</field>
+            <field name="clientes_ids" eval="[(6, 0, [ref('demo_cliente_1'), ref('demo_cliente_2')])]"/>
+        </record>
+
+        <record id="demo_rota_2" model="consignado.rota">
+            <field name="name">Rota Centro Comercial</field>
+            <field name="vendedor_id" ref="base.user_admin"/>
+            <field name="frequencia_dias">14</field>
+            <field name="ultima_data_percorrida" eval="(DateTime.now() - timedelta(days=10)).strftime('%Y-%m-%d')"/>
+            <field name="ativa" eval="True"/>
+            <field name="observacoes">Rota quinzenal no centro comercial. Alguns clientes fecham aos domingos.</field>
+            <field name="clientes_ids" eval="[(6, 0, [ref('demo_cliente_3'), ref('demo_cliente_4')])]"/>
+        </record>
+
+        <record id="demo_rota_3" model="consignado.rota">
+            <field name="name">Rota Zona Norte</field>
+            <field name="vendedor_id" ref="base.user_admin"/>
+            <field name="frequencia_dias">10</field>
+            <field name="ultima_data_percorrida" eval="(DateTime.now() - timedelta(days=15)).strftime('%Y-%m-%d')"/>
+            <field name="ativa" eval="True"/>
+            <field name="observacoes">Rota na zona norte. Cliente da Loja 24h sempre disponível.</field>
+            <field name="clientes_ids" eval="[(6, 0, [ref('demo_cliente_5')])]"/>
+        </record>
+
+        <record id="demo_rota_4" model="consignado.rota">
+            <field name="name">Rota Especial - Eventos</field>
+            <field name="vendedor_id" ref="base.user_admin"/>
+            <field name="frequencia_dias">30</field>
+            <field name="ultima_data_percorrida" eval="(DateTime.now() - timedelta(days=25)).strftime('%Y-%m-%d')"/>
+            <field name="ativa" eval="False"/>
+            <field name="observacoes">Rota especial para eventos e promoções. Atualmente inativa.</field>
+            <field name="clientes_ids" eval="[(6, 0, [ref('demo_cliente_1'), ref('demo_cliente_3'), ref('demo_cliente_5')])]"/>
+        </record>
+
+    </data>
+</odoo>

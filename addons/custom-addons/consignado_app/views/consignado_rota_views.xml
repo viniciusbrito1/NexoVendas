@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- List View para listagem das rotas -->
+        <record id="view_consignado_rota_list" model="ir.ui.view">
+            <field name="name">consignado.rota.list</field>
+            <field name="model">consignado.rota</field>
+            <field name="arch" type="xml">
+                <list string="Rotas de Consignados" decoration-info="status == 'pendente'" 
+                      decoration-warning="status == 'em_andamento'" 
+                      decoration-danger="status == 'atrasada'"
+                      decoration-success="status == 'concluida'">
+                    <field name="name"/>
+                    <field name="vendedor_id"/>
+                    <field name="total_clientes"/>
+                    <field name="frequencia_dias"/>
+                    <field name="ultima_data_percorrida"/>
+                    <field name="proxima_data"/>
+                    <field name="dias_restantes"/>
+                    <field name="status"/>
+                    <field name="ativa" widget="toggle"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View para criação/edição das rotas -->
+        <record id="view_consignado_rota_form" model="ir.ui.view">
+            <field name="name">consignado.rota.form</field>
+            <field name="model">consignado.rota</field>
+            <field name="arch" type="xml">
+                <form string="Rota de Consignados">
+                    <header>
+                        <button name="action_marcar_concluida" type="object" 
+                                string="Marcar como Concluída" 
+                                class="btn-primary"
+                                invisible="status in ['concluida']"/>
+                        <button name="action_reagendar_rota" type="object" 
+                                string="Reagendar" 
+                                class="btn-secondary"/>
+                        <field name="status"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_visualizar_clientes" type="object" 
+                                    class="oe_stat_button" icon="fa-users">
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_clientes"/>
+                                    </span>
+                                    <span class="o_stat_text">Clientes</span>
+                                </div>
+                            </button>
+                        </div>
+                        
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Nome da rota..."/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group name="info_basica">
+                                <field name="vendedor_id" options="{'no_create': True}"/>
+                                <field name="frequencia_dias"/>
+                                <field name="ativa"/>
+                            </group>
+                            <group name="datas">
+                                <field name="ultima_data_percorrida" readonly="1"/>
+                                <field name="proxima_data" readonly="1"/>
+                                <field name="dias_restantes" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Clientes da Rota" name="clientes">
+                                <field name="clientes_ids" nolabel="1">
+                                    <list editable="bottom">
+                                        <field name="name"/>
+                                        <field name="email"/>
+                                        <field name="phone"/>
+                                        <field name="street"/>
+                                        <field name="city"/>
+                                    </list>
+                                    <form>
+                                        <group>
+                                            <group>
+                                                <field name="name"/>
+                                                <field name="email"/>
+                                                <field name="phone"/>
+                                            </group>
+                                            <group>
+                                                <field name="street"/>
+                                                <field name="city"/>
+                                                <field name="state_id"/>
+                                                <field name="zip"/>
+                                            </group>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                            
+                            <page string="Observações" name="observacoes">
+                                <field name="observacoes" nolabel="1" placeholder="Adicione observações sobre esta rota..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View para filtros e busca -->
+        <record id="view_consignado_rota_search" model="ir.ui.view">
+            <field name="name">consignado.rota.search</field>
+            <field name="model">consignado.rota</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Rotas">
+                    <field name="name" string="Nome da Rota"/>
+                    <field name="vendedor_id" string="Vendedor"/>
+                    <field name="clientes_ids" string="Cliente"/>
+                    
+                    <filter string="Rotas Ativas" name="ativas" domain="[('ativa', '=', True)]"/>
+                    <filter string="Rotas Inativas" name="inativas" domain="[('ativa', '=', False)]"/>
+                    
+                    <separator/>
+                    <filter string="Pendentes" name="pendentes" domain="[('status', '=', 'pendente')]"/>
+                    <filter string="Em Andamento" name="em_andamento" domain="[('status', '=', 'em_andamento')]"/>
+                    <filter string="Atrasadas" name="atrasadas" domain="[('status', '=', 'atrasada')]"/>
+                    <filter string="Concluídas" name="concluidas" domain="[('status', '=', 'concluida')]"/>
+                    
+                    <separator/>
+                    <filter string="Próximas 7 dias" name="proximas_7_dias" 
+                            domain="[('proxima_data', '&lt;=', (context_today() + datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Atrasadas" name="atrasadas_data" 
+                            domain="[('proxima_data', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                    
+                    <group expand="0" string="Agrupar Por">
+                        <filter string="Vendedor" name="group_vendedor" context="{'group_by': 'vendedor_id'}"/>
+                        <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                        <filter string="Frequência" name="group_frequencia" context="{'group_by': 'frequencia_dias'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Kanban View para visualização em cards -->
+        <record id="view_consignado_rota_kanban" model="ir.ui.view">
+            <field name="name">consignado.rota.kanban</field>
+            <field name="model">consignado.rota</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="status" class="o_kanban_small_column">
+                    <field name="name"/>
+                    <field name="vendedor_id"/>
+                    <field name="total_clientes"/>
+                    <field name="proxima_data"/>
+                    <field name="dias_restantes"/>
+                    <field name="status"/>
+                    <field name="ativa"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card oe_kanban_global_click">
+                                <div class="oe_kanban_content">
+                                    <div class="o_kanban_record_top">
+                                        <div class="o_kanban_record_headings">
+                                            <strong class="o_kanban_record_title">
+                                                <field name="name"/>
+                                            </strong>
+                                        </div>
+                                        <div class="o_kanban_record_subtitle">
+                                            <field name="vendedor_id"/>
+                                        </div>
+                                    </div>
+                                    <div class="o_kanban_record_body">
+                                        <div class="text-muted">
+                                            <i class="fa fa-users"/> <field name="total_clientes"/> clientes
+                                        </div>
+                                        <div class="text-muted">
+                                            <i class="fa fa-calendar"/> Próxima: <field name="proxima_data"/>
+                                        </div>
+                                        <div t-if="record.dias_restantes.raw_value" class="text-muted">
+                                            <i class="fa fa-clock-o"/> 
+                                            <span t-if="record.dias_restantes.raw_value > 0">
+                                                <field name="dias_restantes"/> dias restantes
+                                            </span>
+                                            <span t-else="" class="text-danger">
+                                                Atrasada há <t t-esc="abs(record.dias_restantes.raw_value)"/> dias
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- Calendar View para visualização temporal -->
+        <record id="view_consignado_rota_calendar" model="ir.ui.view">
+            <field name="name">consignado.rota.calendar</field>
+            <field name="model">consignado.rota</field>
+            <field name="arch" type="xml">
+                <calendar string="Cronograma de Rotas" 
+                          date_start="proxima_data" 
+                          color="vendedor_id"
+                          event_open_popup="true">
+                    <field name="name"/>
+                    <field name="vendedor_id"/>
+                    <field name="total_clientes"/>
+                    <field name="status"/>
+                </calendar>
+            </field>
+        </record>
+
+        <!-- Pivot View para análise -->
+        <record id="view_consignado_rota_pivot" model="ir.ui.view">
+            <field name="name">consignado.rota.pivot</field>
+            <field name="model">consignado.rota</field>
+            <field name="arch" type="xml">
+                <pivot string="Análise de Rotas">
+                    <field name="vendedor_id" type="row"/>
+                    <field name="status" type="col"/>
+                    <field name="total_clientes" type="measure"/>
+                    <field name="frequencia_dias" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Graph View para gráficos -->
+        <record id="view_consignado_rota_graph" model="ir.ui.view">
+            <field name="name">consignado.rota.graph</field>
+            <field name="model">consignado.rota</field>
+            <field name="arch" type="xml">
+                <graph string="Estatísticas de Rotas" type="bar">
+                    <field name="vendedor_id" type="row"/>
+                    <field name="total_clientes" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Action para abrir as rotas -->
+        <record id="action_consignado_rota" model="ir.actions.act_window">
+            <field name="name">Rotas de Consignados</field>
+            <field name="res_model">consignado.rota</field>
+            <field name="view_mode">list,kanban,form,calendar,pivot,graph</field>
+            <field name="context">{'search_default_ativas': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Crie sua primeira rota de consignados!
+                </p>
+                <p>
+                    As rotas permitem organizar clientes por vendedor e controlar
+                    a frequência de visitas de forma automática.
+                </p>
+            </field>
+        </record>
+
+        <!-- Action para vendedores visualizarem apenas suas rotas -->
+        <record id="action_minhas_rotas" model="ir.actions.act_window">
+            <field name="name">Minhas Rotas</field>
+            <field name="res_model">consignado.rota</field>
+            <field name="view_mode">list,kanban,form,calendar</field>
+            <field name="domain">[('vendedor_id', '=', uid)]</field>
+            <field name="context">{'search_default_ativas': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Suas rotas de consignados!
+                </p>
+                <p>
+                    Aqui você pode visualizar e gerenciar todas as rotas
+                    atribuídas a você.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>
